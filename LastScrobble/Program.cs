@@ -22,24 +22,25 @@ namespace LastScrobble
 
             StringBuilder sb = new StringBuilder();
 
+            //buffer, needed for web requests
             byte[] buf = new byte[8192];
+
             String user = args[0];
             String url = "http://ws.audioscrobbler.com/2.0/user/" + user + "/recenttracks.xml";
 
+
             try
             {
-
+                //setup web request stuff
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-
                 HttpWebResponse response = (HttpWebResponse)req.GetResponse();
-
                 Stream resStream = response.GetResponseStream();
 
+                //temp variables
                 string tempString = null;
                 int count = 0;
 
-
-
+                //read the web stream in
                 do
                 {
                     count = resStream.Read(buf, 0, buf.Length);
@@ -53,10 +54,10 @@ namespace LastScrobble
                 }
                 while (count > 0);
 
+                //assemble final API response
                 String xml = sb.ToString();
 
-
-
+                //parse the XML for the data
                 using (XmlReader reader = XmlReader.Create(new StringReader(xml)))
                 {
                     bool foundStuff = false;
@@ -67,13 +68,13 @@ namespace LastScrobble
                         reader.MoveToFirstAttribute();
                         bool nowplaying = reader.Value == "true";
 
-
                         reader.ReadToFollowing("artist");
                         String artist = reader.ReadElementContentAsString();
 
                         reader.ReadToFollowing("name");
                         String name = reader.ReadElementContentAsString();
 
+                        //console window alignment
                         int padding = 35 - name.Length;
 
                         for (int i = 0; i < padding; i++)
@@ -82,6 +83,7 @@ namespace LastScrobble
                             name += " ";
                         }
 
+                        //truncate name to 40 chars
                         if (name.Length > 40)
                         {
                             name = name.Substring(0, 35);
@@ -97,7 +99,6 @@ namespace LastScrobble
                         Console.WriteLine(output);
 
                         foundStuff = true;
-
                     }
 
                     if (!foundStuff)
