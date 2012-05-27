@@ -75,19 +75,8 @@ namespace LastScrobble
                         String name = reader.ReadElementContentAsString();
 
                         //console window alignment
-                        int padding = 35 - name.Length;
-
-                        for (int i = 0; i < padding; i++)
-                        {
-                            //I'm a terrible person.
-                            name += " ";
-                        }
-
-                        //truncate name to 40 chars
-                        if (name.Length > 40)
-                        {
-                            name = name.Substring(0, 35);
-                        }
+                        name = name.PadRight(40);
+                        name = name.Substring(0, 40);
 
                         String output = name + " -  " + artist;
 
